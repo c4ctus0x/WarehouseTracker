@@ -2,27 +2,28 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-const app = express();
 
-app.use(bodyParser.json());
+const warehouseTrackerApp = express();
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => {
-      console.error(err);
+warehouseTrackerApp.use(bodyParser.json());
+
+mongoose.connect(process.env.DATABASE_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB Connected Successfully'))
+  .catch(error => {
+      console.error('Database Connection Failed:', error);
       process.exit(1);
   });
 
-app.get('/', (req, res) => {
-  res.send('Welcome to the WarehouseTracker API');
+warehouseTrackerApp.get('/', (request, response) => {
+  response.send('Welcome to the WarehouseTracker API!');
 });
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
+warehouseTrackerApp.use((error, request, response, next) => {
+  console.error('Internal Server Error:', error.stack);
+  response.status(500).send('Internal Server Error');
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const serverPort = process.env.PORT || 3000;
+warehouseTracker:App.listen(serverPort, () => {
+  console.log(`WarehouseTracker Server is running on port ${serverPort}`);
 });
