@@ -1,4 +1,3 @@
-// dbConnection.js
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -11,51 +10,13 @@ const connectDB = async () => {
     console.log('MongoDB connection successful');
   } catch (err) {
     console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit process with failure
   }
 };
 
 module.exports = connectDB;
 ```
 ```javascript
-// Item.js
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
-const itemSchema = new Schema({
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    description: String,
-    quantity: { type: Number, required: true },
-    category: String
-}, { timestamps: true });
-
-const Item = mongoose.model('Item', itemSchema);
-
-module.exports = Item;
-```
-```javascript
-// Employee.js
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
-const employeeSchema = new Schema({
-    firstName: { type: String, required: true },
-    lastName: { type: String, required:  true },
-    position: { type: String, required: true },
-    salary: Number,
-    startDate: { type: Date, default: Date.now },
-    contactInfo: {
-        email: String,
-        phone: String
-    }
-}, { timestamps: true });
-
-const Employee = mongoose.model('Employee', employeeSchema);
-
-module.exports = Employee;
-```
-```javascript
-// Operation.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -67,12 +28,11 @@ const operationSchema = new Schema({
     operationDate: { type: Date, default: Date.now }
 }, { timestamps: true });
 
-const Operation = mongoose.model('Operation', operationWhatSchema);
+const Operation = mongoose.model('Operation', operationSchema); // Corrected the typo here
 
 module.exports = Operation;
 ```
 ```javascript
-// index.js or app.js
 const express = require('express');
 const connectDB = require('./dbConnection'); // Adjust path as necessary
 
@@ -81,7 +41,16 @@ connectDB();
 
 const app = express();
 
-// Express application logic here
+// Middleware to parse json
+app.use(express.json());
+
+// Insert your route handlers here
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
