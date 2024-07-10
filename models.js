@@ -17,22 +17,6 @@ const connectDB = async () => {
 module.exports = connectDB;
 ```
 ```javascript
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
-const operationSchema = new Schema({
-    type: { type: String, required: true, enum: ['Import', 'Export', 'Inventory', 'Maintenance'] },
-    item: { type: Schema.Types.ObjectId, ref: 'Item', required: true },
-    quantity: { type: Number, required: true },
-    operator: { type: Schema.Types.ObjectId, ref: 'Employee' },
-    operationDate: { type: Date, default: Date.now }
-}, { timestamps: true });
-
-const Operation = mongoose.model('Operation', operationSchema); // Corrected the typo here
-
-module.exports = Operation;
-```
-```javascript
 const express = require('express');
 const connectDB = require('./dbConnection'); // Adjust path as necessary
 
@@ -41,15 +25,31 @@ connectDB();
 
 const app = express();
 
-// Middleware to parse json
+// Middleware to parse JSON
 app.use(express.json());
 
-// Insert your route handlers here
+// Example Route Handler with Error Handling
+app.post('/operations', async (req, res, next) => {
+  try {
+    // Replace 'Operation' with your mongoose model imported at the top
+    const operation = await Operation.create(req.body);
+    res.status(201).json(operation);
+  } catch (error) {
+    // Passing errors to the error-handling middleware
+    next(error);
+  }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
+    console.error(err); // For detailed error logging
+
+    // Enhanced response with error details
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined // Consider removing stack in production
+    });
 });
 
 const PORT = process.env.PORT || 3000;
