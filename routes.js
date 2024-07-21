@@ -23,8 +23,19 @@ const db = {
 };
 
 function handleError(res, error) {
-    console.error(error); 
-    res.status(500).json({ message: "An error occurred. Please try again later." });
+    console.error(error);
+    if(error instanceof CustomError) {
+        res.status(error.statusCode).json({ message: error.message });
+    } else {
+        res.status(500).json({ message: "An error occurred. Please try again later." });
+    }
+}
+
+class CustomError extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+    }
 }
 
 router.post('/inventory', (req, res) => {
@@ -94,7 +105,7 @@ router.delete('/employees/:id', (req, res) => {
     }
 });
 
-router.get('/employees/:id', (req, res) {
+router.get('/employees/:id', (req, res) => {
     try {
         const employee = db.employees.get(req.params.id);
         if (employee) {
@@ -103,7 +114,7 @@ router.get('/employees/:id', (req, res) {
             res.status(404).json({ message: "Employee not found." });
         }
     } catch (error) {
-        handleError(res, error);
+      handleError(res, error);
     }
 });
 
