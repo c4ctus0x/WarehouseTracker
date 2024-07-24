@@ -3,22 +3,18 @@ const router = express.Router();
 
 const db = {
     inventory: {
-        add: (item) => {/* ... */},
-        update: (id, item) => {/* ... */},
-        delete: (id) => {/* ... */},
-        get: (id) => {/* ... */}
+        add: (items) => {/* ... */},
+        update: (updates) => {/* ... Each item in updates should have an id and item info */},
+        delete: (ids) => {/* ... */},
+        get: (id) => {/* ... */},
+        bulkGet: (ids) => {/* ... */} 
     },
     employees: {
-        add: (employee) => {/* ... */},
-        update: (id, employee) => {/* ... */},
-        delete: (id) => {/* ... */},
-        get: (id) => {/* ... */}
-    },
-    operations: {
-        add: (operation) => {/* ... */},
-        update: (id, operation) => {/* ... */},
-        delete: (id) => {/* ... */},
-        get: (id) => {/* ... */}
+        add: (employees) => {/* ... */},
+        update: (updates) => {/* ... Each item in updates should have an id and employee info */},
+        delete: (ids) => {/* ... */},
+        get: (id) => {/* ... */},
+        bulkGet: (ids) => {/* ... */} 
     }
 };
 
@@ -38,83 +34,30 @@ class CustomError extends Error {
     }
 }
 
-router.post('/inventory', (req, res) => {
+router.post('/inventory/bulk', (req, res) => {
     try {
-        db.inventory.add(req.body);
+        db.inventory.add(req.body); 
         res.status(201).send();
     } catch (error) {
         handleError(res, error);
     }
 });
 
-router.put('/inventory/:id', (req, res) => {
+router.put('/inventory/bulk', (req, res) => {
     try {
-        db.inventory.update(req.params.id, req.body);
+        db.inventory.update(req.body); 
         res.send();
     } catch (error) {
         handleError(res, error);
     }
 });
 
-router.delete('/inventory/:id', (req, res) => {
+router.delete('/inventory/bulk', (req, res) => {
     try {
-        db.inventory.delete(req.params.id);
+        db.inventory.delete(req.body); 
         res.send();
     } catch (error) {
         handleError(res, error);
-    }
-});
-
-router.get('/inventory/:id', (req, res) => {
-    try {
-        const item = db.inventory.get(req.params.id);
-        if (item) {
-            res.json(item);
-        } else {
-            res.status(404).json({ message: "Item not found." });
-        }
-    } catch (error) {
-        handleError(res, error);
-    }
-});
-
-router.post('/employees', (req, res) => {
-    try {
-        db.employees.add(req.body);
-        res.status(201).send();
-    } catch (error) {
-        handleError(res, error);
-    }
-});
-
-router.put('/employees/:id', (req, res) => {
-    try {
-        db.employees.update(req.params.id, req.body);
-        res.send();
-    } catch (error) {
-        handleError(res, error);
-    }
-});
-
-router.delete('/employees/:id', (req, res) => {
-    try {
-        db.employees.delete(req.params.id);
-        res.send();
-    } catch (error) {
-        handleError(res, error);
-    }
-});
-
-router.get('/employees/:id', (req, res) => {
-    try {
-        const employee = db.employees.get(req.params.id);
-        if (employee) {
-            res.json(employee);
-        } else {
-            res.status(404).json({ message: "Employee not found." });
-        }
-    } catch (error) {
-      handleError(res, error);
     }
 });
 
