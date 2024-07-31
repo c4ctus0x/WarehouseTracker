@@ -8,8 +8,14 @@
 </head>
 <body>
     <h1>Warehouse Tracker</h1>
+    <button id="newButton">Click Me!</button>
     <div id="app"></div>
     <script src="env.js"></script>
     <script src="app.js"></script>
+    <script>
+        document.getElementById('newButton').addEventListener('click', function() {
+            alert('Button clicked!');
+        });
+    </script>
 </body>
 </html>
