@@ -3,29 +3,36 @@ import { Link } from 'react-router-dom';
 
 const InventoryList = () => {
   const [items, setItems] = useState([]);
-  const [error, setError] = useState(''); // State to track error
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/inventory`)
-      .then((response) => {
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/inventory`);
+        
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        return response.json();
-      })
-      .then((data) => setItems(data))
-      .catch((error) => {
+        
+        const data = await response.json();
+        setItems(data);
+        
+      } catch (error) {
         console.error('Error fetching inventory data:', error);
-        setError('Failed to load inventory data. Please try again later.'); // Set error message
-      });
+        setError('Failed to load inventory data. Please try again later.');
+      }
+    };
+
+    fetchInventory();
   }, []);
 
   return (
     <div>
       <h1>Inventory List</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Conditionally render the error message */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
       <ul>
-        {items.map((item) => (
+        {items.map(item => (
           <li key={item.id}>
             <Link to={`/item/${item.id}`}>
               {item.name} - Quantity: {item.quantity}
